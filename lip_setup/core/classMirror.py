@@ -29,8 +29,6 @@ def add_mirrored_selection(side_l, side_r):
 
 def get_mirrored_selection(control="L_eye01_CTL", side_l="L", side_r="R", separator="_", side_index=0):
     # Change affected controller for its mirrored counterpart 
-   
-    token_sides = ["side_l", "side_r"]
 
     # Find side indication in control's name
     control_tokens = control.split(separator)

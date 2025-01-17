@@ -1,4 +1,6 @@
+from lip_setup.core.className import namingConvention
 import maya.cmds as cmds
+
 
 # Reload relevant modules before showing the UI
 import zanimTools.lip_setup.core.classLips
@@ -18,4 +20,7 @@ reload(zanimTools.lip_setup)
 from zanimTools.lip_setup.ui.main_window import mainWindow
 
 def show():
-    mainWindow()
+    if cmds.window("rigSetupUI", exists=True):
+        cmds.deleteUI("rigSetupUI")
+    naming_convention = namingConvention()
+    myWindow = mainWindow(naming_convention)

@@ -1,14 +1,15 @@
 import re
 
-class className:
-    def __init__(self, side_l_name="L", side_r_name="R", side_c_name="C",
+class namingConvention:
+    # TODO make this updated by inputs in maya ask Alex, he seemed to know what he was talking about
+    def __init__(self, side_l="L", side_r="R", side_c="C",
                  pos_top_name="Top", pos_bot_name="Bot", pos_corner_name="Corner", 
                  pos_mid_name="Mid", pos_front_name="Front", pos_back_name="Back", 
-                 type_jnt="JNT", type_ctrl="CTL"):
+                 jaw_joint="JNT", jaw_control="CTL"):
         # Initialize the naming conventions with defaults or provided values
-        self.side_l_name = side_l_name
-        self.side_r_name = side_r_name
-        self.side_c_name = side_c_name
+        self.side_l = side_l
+        self.side_r = side_r
+        self.side_c = side_c
         
         self.pos_top_name = pos_top_name
         self.pos_bot_name = pos_bot_name
@@ -17,34 +18,34 @@ class className:
         self.pos_front_name = pos_front_name
         self.pos_back_name = pos_back_name
         
-        self.type_jnt = type_jnt
-        self.type_ctrl = type_ctrl
+        self.jaw_joint = jaw_joint
+        self.jaw_control = jaw_control
 
     @classmethod
     def get_mirrored_name(cls, controller_name):
         # Logic to get mirrored name
-        if cls.side_l_name in controller_name:
-            return controller_name.replace(cls.side_l_name, cls.side_r_name)
-        elif cls.side_r_name in controller_name:
-            return controller_name.replace(cls.side_r_name, cls.side_l_name)
+        if cls.side_l in controller_name:
+            return controller_name.replace(cls.side_l, cls.side_r)
+        elif cls.side_r in controller_name:
+            return controller_name.replace(cls.side_r, cls.side_l)
         else:
             return controller_name  # Return as-is if no match
     
     def update_naming_convention(self, side_l, side_r, side_c, pos_top, pos_bot, 
                                  pos_corner, pos_mid, pos_front, pos_back, 
-                                 type_jnt, type_ctrl):
+                                 jaw_joint, jaw_control):
         # Update the naming convention values based on UI input
-        self.side_l_name = side_l
-        self.side_r_name = side_r
-        self.side_c_name = side_c
+        self.side_l = side_l
+        self.side_r = side_r
+        self.side_c = side_c
         self.pos_top_name = pos_top
         self.pos_bot_name = pos_bot
         self.pos_corner_name = pos_corner
         self.pos_mid_name = pos_mid
         self.pos_front_name = pos_front
         self.pos_back_name = pos_back
-        self.type_jnt = type_jnt
-        self.type_ctrl = type_ctrl
+        self.jaw_joint = jaw_joint
+        self.jaw_control = jaw_control
 
     def resolve(self, base_name, pos_name, side_name, number=None, type=None):
         """
@@ -52,11 +53,11 @@ class className:
         """
         components = []
         if side_name == 'L':
-            components.append(self.side_l_name)
+            components.append(self.side_l)
         elif side_name == 'R':
-            components.append(self.side_r_name)
+            components.append(self.side_r)
         elif side_name == 'C':
-            components.append(self.side_c_name)
+            components.append(self.side_c)
         
         if base_name:
             components.append(base_name)
@@ -79,9 +80,9 @@ class className:
         
         if type:
             if type == 'JNT':
-                components.append(self.type_jnt)
+                components.append(self.jaw_joint)
             elif type == 'CTL':
-                components.append(self.type_ctrl)
+                components.append(self.jaw_control)
 
         return "_".join(components)
 
@@ -113,7 +114,7 @@ class className:
         number = match.group(2) if match else None
 
         # Step 5: Get the side from the prefix (first character)
-        side_name = words[0] if len(words) > 0 and words[0] in [cls.side_l_name, cls.side_r_name, cls.side_c_name] else None
+        side_name = words[0] if len(words) > 0 and words[0] in [cls.side_l, cls.side_r, cls.side_c] else None
 
         # Return an instance of NameHelper with the extracted values
         return cls(
