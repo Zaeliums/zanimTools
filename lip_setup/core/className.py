@@ -1,6 +1,6 @@
 import re
 
-class NameHelper:
+class className:
     def __init__(self, side_l_name="L", side_r_name="R", side_c_name="C",
                  pos_top_name="Top", pos_bot_name="Bot", pos_corner_name="Corner", 
                  pos_mid_name="Mid", pos_front_name="Front", pos_back_name="Back", 

@@ -35,31 +35,19 @@ def create_lip_nodes(jawJoint, jawControl, side_l, side_r, side_c, name_top, nam
         if name_bot in control:
             cmds.shadingNode("remapValue", au=1, n=control + "_inv")
 
-        # Connect Jaw rotate with the multiply node (to allow lip rotation to match jaw rotation)
-        cmds.connectAttr (jawJoint + ".rotate", control + "_multi.input1", f=1) 
-
-        # Connect Jaw controller attribute "Sticky Lips" to the input value of the _remap_pressed node 
-        cmds.connectAttr (jawControl + ".StickyLips", control + "_remap_pressed.inputValue", f=1) 
-
-        # Conditionally connect the _remap_pressed.outValue
-        if name_bot in control:
-            cmds.connectAttr(control + "_remap_pressed.outValue", control + "_inv.inputValue", f=1)
-        else:
-            cmds.connectAttr(control + "_remap_pressed.outValue", control + "_remap.outputMax", f=1)
-
-        # Connect Jaw controller attribute "Sticky Top Bot" to the input value of the _remap node
-        cmds.connectAttr (jawControl + ".StickyTopBot", control + "_remap.inputValue", f=1)
-
-        # Conditionnally connect _remap outValue to the remap_pressed outputMax
-        if name_bot in control:
-            cmds.connectAttr (control + "_remap.outValue", control + "_remap_pressed.outputMax", f=1) 
-
-        # Conditionnally connect outValue of appropriated node to the input 2 of the multiplier node (to multiply with the jaw rotation)
-        if name_bot in control:
+        
+        cmds.connectAttr (jawJoint + ".rotate", control + "_multi.input1", f=1) # Connect Jaw rotate with the multiply node (to allow lip rotation to match jaw rotation)
+        cmds.connectAttr (jawControl + ".StickyLips", control + "_remap_pressed.inputValue", f=1) # Connect Jaw controller attribute "Sticky Lips" to the input value of the _remap_pressed node 
+        
+        if name_bot in control: 
+            cmds.connectAttr(control + "_remap_pressed.outValue", control + "_inv.inputValue", f=1) # Conditionally connect the _remap_pressed.outValue
+            cmds.connectAttr (control + "_remap.outValue", control + "_remap_pressed.outputMax", f=1) # Conditionnally connect _remap outValue to the remap_pressed outputMax
+            # Conditionnally connect outValue of appropriated node to the input 2 of the multiplier node (to multiply with the jaw rotation)
             cmds.connectAttr (control + "_inv.outValue", control + "_multi.input2X", f=1) 
             cmds.connectAttr (control + "_inv.outValue", control + "_multi.input2Y", f=1) 
             cmds.connectAttr (control + "_inv.outValue", control + "_multi.input2Z", f=1) 
         else:
+            cmds.connectAttr(control + "_remap_pressed.outValue", control + "_remap.outputMax", f=1)
             cmds.connectAttr (control + "_remap.outValue", control + "_multi.input2X", f=1) 
             cmds.connectAttr (control + "_remap.outValue", control + "_multi.input2Y", f=1) 
             cmds.connectAttr (control + "_remap.outValue", control + "_multi.input2Z", f=1) 
@@ -67,16 +55,18 @@ def create_lip_nodes(jawJoint, jawControl, side_l, side_r, side_c, name_top, nam
         # cmds.setAttr(control + "_remap.inputMin", offsetValue) 
         # cmds.setAttr(control + "_remap.inputMax", offsetValue + 1)
 
-        # Connect _multi outputs to the correct nodes and into the _drivers
-        cmds.connectAttr (control + "_multi.output", control + "_plus.input3D[0]", f=1) 
-
+        cmds.connectAttr (jawControl + ".StickyTopBot", control + "_remap.inputValue", f=1) # Connect Jaw controller attribute "Sticky Top Bot" to the input value of the _remap node
+        cmds.connectAttr (control + "_multi.output", control + "_plus.input3D[0]", f=1)  # Connect _multi outputs to the correct nodes and into the _drivers 
         cmds.connectAttr (control + "_multi.outputX", control + "_driver.rotateX", f=1) 
         cmds.connectAttr (control + "_multi.outputY", control + "_driver.rotateY", f=1) 
-
-        # Connect "Press Lips" attribute with the add node and then this node to the controller_driver
-        cmds.connectAttr (jawControl + ".PressLips", control + "_plus.input3D[1].input3Dz", f=1) 
-
+        cmds.connectAttr (jawControl + ".PressLips", control + "_plus.input3D[1].input3Dz", f=1) # Connect "Press Lips" attribute with the add node and then this node to the controller_driver
         cmds.connectAttr (control + "_plus.output3Dz", control + "_driver.rotateZ", f=1) 
+
+
+
+
+
+
 
         # If two controllers are selected and shall be controlled by the same system, do so on the second one as well
         if is_mirror_behavior: 
@@ -107,6 +97,5 @@ def create_lip_nodes(jawJoint, jawControl, side_l, side_r, side_c, name_top, nam
     for control in controlList:
         create_nodes_for_selected(control, is_mirror_behavior)
     cmds.warning("Lip setup complete")
-
 
 

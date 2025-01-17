@@ -15,7 +15,7 @@ reload(zanimTools.lip_setup.ui)
 reload(zanimTools.lip_setup)
 
 # Import the show_lip_setup_ui function
-from zanimTools.lip_setup.ui.main_window import show_lip_setup_ui
+from zanimTools.lip_setup.ui.main_window import mainWindow
 
 def show():
-    show_lip_setup_ui()
+    mainWindow()
