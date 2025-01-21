@@ -1,26 +1,14 @@
-from lip_setup.core.className import namingConvention
+from reload_modules import resetSessionForScript
+from rig_setup.core.scene_data import namingConvention
 import maya.cmds as cmds
 
 
-# Reload relevant modules before showing the UI
-import zanimTools.lip_setup.core.classLips
-import zanimTools.lip_setup.core.className
-import zanimTools.lip_setup.ui.main_window
-
-
-# Reload all relevant modules
-reload(zanimTools.lip_setup.core.classLips)
-reload(zanimTools.lip_setup.core.className)
-reload(zanimTools.lip_setup.core)
-reload(zanimTools.lip_setup.ui.main_window)
-reload(zanimTools.lip_setup.ui)
-reload(zanimTools.lip_setup)
-
-# Import the show_lip_setup_ui function
-from zanimTools.lip_setup.ui.main_window import mainWindow
+resetSessionForScript("C:\Users\ZaDus\Documents\maya\scripts\zanimTools")
+# Import the main menu function
+from zanimTools.rig_setup.ui.main_menu import mainMenu
 
 def show():
     if cmds.window("rigSetupUI", exists=True):
         cmds.deleteUI("rigSetupUI")
     naming_convention = namingConvention()
-    myWindow = mainWindow(naming_convention)
+    myWindow = mainMenu(naming_convention)
