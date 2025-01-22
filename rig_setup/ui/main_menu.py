@@ -1,6 +1,7 @@
 import maya.cmds as cmds
 from zanimTools.rig_setup.core.module_lips import create_lip_nodes
 
+
 class mainMenu:
 
     def __init__(self, naming_convention):
@@ -23,13 +24,21 @@ class mainMenu:
         cmds.tabLayout(self.tabs, edit=True, tabLabel=[tab_naming, "Naming Convention"])
         cmds.frameLayout(label="Naming Convention", font="boldLabelFont", collapsable=True)
 
-        self.side_l_textbox = cmds.textFieldGrp(label="Side Left Prefix:", text=self.load_attribute(self.settings_node, "side_l", "L"))
-        self.side_r_textbox = cmds.textFieldGrp(label="Side Right Prefix:", text=self.load_attribute(self.settings_node, "side_r", "R"))
-        self.side_c_textbox = cmds.textFieldGrp(label="Side Center Prefix:", text=self.load_attribute(self.settings_node, "side_c", "C"))
-        self.pos_top_name_textbox = cmds.textFieldGrp(label="TEST:", text=self.load_attribute(self.settings_node, "pos_top_name", "Top"))
-        self.pos_bot_name_textbox = cmds.textFieldGrp(label="Position Bot Name:", text=self.load_attribute(self.settings_node, "pos_bot_name", "Bot"))
-        self.pos_corner_name_textbox = cmds.textFieldGrp(label="Position Corner Name:", text=self.load_attribute(self.settings_node, "pos_corner_name", "Corner"))
-
+        self.side_l_textbox = cmds.textFieldGrp(label="Side Left Prefix:",
+                                                text=self.load_attribute(self.settings_node, "side_l", "L"))
+        self.side_r_textbox = cmds.textFieldGrp(label="Side Right Prefix:",
+                                                text=self.load_attribute(self.settings_node, "side_r", "R"))
+        self.side_c_textbox = cmds.textFieldGrp(label="Side Center Prefix:",
+                                                text=self.load_attribute(self.settings_node, "side_c", "C"))
+        self.pos_top_name_textbox = cmds.textFieldGrp(label="Position Top Name:",
+                                                      text=self.load_attribute(self.settings_node, "pos_top_name",
+                                                                               "Top"))
+        self.pos_bot_name_textbox = cmds.textFieldGrp(label="Position Bot Name:",
+                                                      text=self.load_attribute(self.settings_node, "pos_bot_name",
+                                                                               "Bot"))
+        self.pos_corner_name_textbox = cmds.textFieldGrp(label="Position Corner Name:",
+                                                         text=self.load_attribute(self.settings_node, "pos_corner_name",
+                                                                                  "Corner"))
 
         cmds.setParent("..")
         cmds.setParent("..")
@@ -40,14 +49,17 @@ class mainMenu:
         # Jaw Fields Section
         cmds.frameLayout(label="Jaw Fields", font="boldLabelFont", collapsable=True)
 
-        self.jaw_joint_textbox = cmds.textFieldGrp(label="Jaw Joint:", text=self.load_attribute(self.settings_node, "jaw_joint", ""))
-        self.jaw_control_textbox = cmds.textFieldGrp(label="Jaw Control:", text=self.load_attribute(self.settings_node, "jaw_control", ""))
+        self.jaw_joint_textbox = cmds.textFieldGrp(label="Jaw Joint:",
+                                                   text=self.load_attribute(self.settings_node, "jaw_joint", ""))
+        self.jaw_control_textbox = cmds.textFieldGrp(label="Jaw Control:",
+                                                     text=self.load_attribute(self.settings_node, "jaw_control", ""))
         cmds.setParent("..")
 
         # Mirror Behavior Checkbox
         cmds.frameLayout(label="Mirror Behavior Field", font="boldLabelFont")
 
-        self.mirror_behavior_checkbox = cmds.checkBox(label="Mirror Behavior", value=False, changeCommand=self.refresh_mirror_behavior)
+        self.mirror_behavior_checkbox = cmds.checkBox(label="Mirror Behavior", value=False,
+                                                      changeCommand=self.refresh_mirror_behavior)
         cmds.setParent("..")
 
         cmds.button(label="Build Lip Nodes", command=self.build_lip_nodes)
@@ -73,15 +85,24 @@ class mainMenu:
 
     # Define what the button "save settings" does
     def save_settings(self, *args):
-        self.save_attribute(self.settings_node, "jaw_joint", cmds.textFieldGrp(self.jaw_joint_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "jaw_control", cmds.textFieldGrp(self.jaw_control_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "side_l", cmds.textFieldGrp( self.side_l_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "side_r", cmds.textFieldGrp( self.side_r_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "side_c", cmds.textFieldGrp( self.side_c_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "pos_top_name", cmds.textFieldGrp( self.pos_top_name_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "pos_bot_name", cmds.textFieldGrp( self.pos_bot_name_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "pos_corner_name", cmds.textFieldGrp( self.pos_corner_name_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "mirror_behavior", str(cmds.checkBox(self.mirror_behavior_checkbox, query=True, value=True)))
+        self.save_attribute(self.settings_node, "jaw_joint",
+                            cmds.textFieldGrp(self.jaw_joint_textbox, query=True, text=True))
+        self.save_attribute(self.settings_node, "jaw_control",
+                            cmds.textFieldGrp(self.jaw_control_textbox, query=True, text=True))
+        self.save_attribute(self.settings_node, "side_l",
+                            cmds.textFieldGrp(self.side_l_textbox, query=True, text=True))
+        self.save_attribute(self.settings_node, "side_r",
+                            cmds.textFieldGrp(self.side_r_textbox, query=True, text=True))
+        self.save_attribute(self.settings_node, "side_c",
+                            cmds.textFieldGrp(self.side_c_textbox, query=True, text=True))
+        self.save_attribute(self.settings_node, "pos_top_name",
+                            cmds.textFieldGrp(self.pos_top_name_textbox, query=True, text=True))
+        self.save_attribute(self.settings_node, "pos_bot_name",
+                            cmds.textFieldGrp(self.pos_bot_name_textbox, query=True, text=True))
+        self.save_attribute(self.settings_node, "pos_corner_name",
+                            cmds.textFieldGrp(self.pos_corner_name_textbox, query=True, text=True))
+        self.save_attribute(self.settings_node, "mirror_behavior",
+                            str(cmds.checkBox(self.mirror_behavior_checkbox, query=True, value=True)))
         cmds.warning("Settings saved for this scene!")
 
     # Add a button to run lip setup
@@ -106,6 +127,6 @@ class mainMenu:
             is_mirror_behavior=self.is_mirror_behavior,  # Pass this dynamically
         )
 
-    def refresh_mirror_behavior(self,*args):
+    def refresh_mirror_behavior(self, *args):
         self.is_mirror_behavior = cmds.checkBox(self.mirror_behavior_checkbox, query=True, value=True)
         print(self.is_mirror_behavior)

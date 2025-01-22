@@ -1,13 +1,15 @@
-#import maya.cmds as cmds
+import maya.cmds as cmds
 
+
+# Old script for add mirrored selection, works, but isn't clean
 def add_mirrored_selection(side_l, side_r):
     # Get the selected objects in the scene
     selected = cmds.ls(selection=True)
-    
+
     if not selected:
         cmds.warning("No objects selected.")
         return
-    
+
     mirrored_selection = []
 
     for obj in selected:
@@ -24,33 +26,34 @@ def add_mirrored_selection(side_l, side_r):
     if mirrored_selection:
         selected.extend(mirrored_selection)
         selected = list(set(selected))  # Remove duplicates
-    
+
     cmds.select(selected)  # Update the selection with original + mirrored objects
+
 
 def get_mirrored_selection(control="L_eye01_CTL", side_l="L", side_r="R", separator="_", side_index=0):
     # Change affected controller for its mirrored counterpart 
 
     # Find side indication in control's name
     control_tokens = control.split(separator)
-    print("control tokens=",control_tokens)
+    print("control tokens=", control_tokens)
 
     for i, token in enumerate(control_tokens):
-        print("index,token=",i,token)
+        print("index,token=", i, token)
         if token == side_l:
             token = side_r
-            print("token=",token)
+            print("token=", token)
             control_tokens[side_index] = token
             break
         elif token == side_r:
             token = side_l
-            print("token=",token)
+            print("token=", token)
             control_tokens[side_index] = token
             break
 
-    print("control tokens=",control_tokens)
+    print("control tokens=", control_tokens)
     mirrored_control = separator.join(control_tokens)
 
     return mirrored_control
 
 
-print(get_mirrored_selection())
+
