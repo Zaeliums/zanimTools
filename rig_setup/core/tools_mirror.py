@@ -35,25 +35,22 @@ def get_mirrored_selection(control="L_eye01_CTL", side_l="L", side_r="R", separa
 
     # Find side indication in control's name
     control_tokens = control.split(separator)
-    print("control tokens=", control_tokens)
+    print(f"control tokens={control_tokens}")
 
     for i, token in enumerate(control_tokens):
-        print("index,token=", i, token)
+        print(f"index,token= {i}, {token}")
         if token == side_l:
             token = side_r
-            print("token=", token)
+            print(f"token= {token}")
             control_tokens[side_index] = token
             break
         elif token == side_r:
             token = side_l
-            print("token=", token)
+            print(f"token= {token}")
             control_tokens[side_index] = token
             break
 
-    print("control tokens=", control_tokens)
+    print(f"control tokens= {control_tokens}")
     mirrored_control = separator.join(control_tokens)
 
     return mirrored_control
-
-
-

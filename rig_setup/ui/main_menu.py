@@ -2,7 +2,7 @@ import maya.cmds as cmds
 from zanimTools.rig_setup.core.module_lips import create_lip_nodes
 
 
-class mainMenu:
+class MainMenu:
 
     def __init__(self, naming_convention):
 
@@ -21,7 +21,7 @@ class mainMenu:
 
         # Name Convention Tab
         tab_naming = cmds.columnLayout(adjustableColumn=True)
-        cmds.tabLayout(self.tabs, edit=True, tabLabel=[tab_naming, "Naming Convention"])
+        cmds.tabLayout(self.tabs, edit=True, tabLabel=[(tab_naming, "Naming Convention")])
         cmds.frameLayout(label="Naming Convention", font="boldLabelFont", collapsable=True)
 
         self.side_l_textbox = cmds.textFieldGrp(label="Side Left Prefix:",
@@ -45,7 +45,7 @@ class mainMenu:
 
         # Facial tab
         tab_facial = cmds.columnLayout(adjustableColumn=True)
-        cmds.tabLayout(self.tabs, edit=True, tabLabel=[tab_facial, "Facial"])
+        cmds.tabLayout(self.tabs, edit=True, tabLabel=[(tab_facial, "Facial")])
         # Jaw Fields Section
         cmds.frameLayout(label="Jaw Fields", font="boldLabelFont", collapsable=True)
 
@@ -107,8 +107,8 @@ class mainMenu:
 
     # Add a button to run lip setup
     def build_lip_nodes(self, *args):
-        jaw_joint = cmds.textFieldGrp(self.naming_convention.jaw_joint, query=True, text=True)
-        jaw_control = cmds.textFieldGrp(self.naming_convention.jaw_control, query=True, text=True)
+        jaw_joint = cmds.textFieldGrp(self.jaw_joint_textbox, query=True, text=True)
+        jaw_control = cmds.textFieldGrp(self.jaw_control_textbox, query=True, text=True)
 
         # Get naming convention fields
         side_l = cmds.textFieldGrp(self.side_l_textbox, query=True, text=True)

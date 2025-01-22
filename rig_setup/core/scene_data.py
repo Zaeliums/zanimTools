@@ -1,23 +1,24 @@
 import re
 
-class namingConvention:
-    # TODO make this updated by inputs in maya ask Alex, he seemed to know what he was talking about
+
+class NamingConvention:
+    # TODO: Make this updated by inputs in Maya; ask Alex, he seemed to know what he was talking about
     def __init__(self, side_l="L", side_r="R", side_c="C",
-                 pos_top_name="Top", pos_bot_name="Bot", pos_corner_name="Corner", 
-                 pos_mid_name="Mid", pos_front_name="Front", pos_back_name="Back", 
+                 pos_top_name="Top", pos_bot_name="Bot", pos_corner_name="Corner",
+                 pos_mid_name="Mid", pos_front_name="Front", pos_back_name="Back",
                  jaw_joint="JNT", jaw_control="CTL"):
         # Initialize the naming conventions with defaults or provided values
         self.side_l = side_l
         self.side_r = side_r
         self.side_c = side_c
-        
+
         self.pos_top_name = pos_top_name
         self.pos_bot_name = pos_bot_name
         self.pos_corner_name = pos_corner_name
         self.pos_mid_name = pos_mid_name
         self.pos_front_name = pos_front_name
         self.pos_back_name = pos_back_name
-        
+
         self.jaw_joint = jaw_joint
         self.jaw_control = jaw_control
 
@@ -30,9 +31,9 @@ class namingConvention:
             return controller_name.replace(cls.side_r, cls.side_l)
         else:
             return controller_name  # Return as-is if no match
-    
-    def update_naming_convention(self, side_l, side_r, side_c, pos_top, pos_bot, 
-                                 pos_corner, pos_mid, pos_front, pos_back, 
+
+    def update_naming_convention(self, side_l, side_r, side_c, pos_top, pos_bot,
+                                 pos_corner, pos_mid, pos_front, pos_back,
                                  jaw_joint, jaw_control):
         # Update the naming convention values based on UI input
         self.side_l = side_l
@@ -58,10 +59,10 @@ class namingConvention:
             components.append(self.side_r)
         elif side_name == 'C':
             components.append(self.side_c)
-        
+
         if base_name:
             components.append(base_name)
-        
+
         if pos_name == 'Top':
             components.append(self.pos_top_name)
         elif pos_name == 'Bot':
@@ -74,10 +75,10 @@ class namingConvention:
             components.append(self.pos_front_name)
         elif pos_name == 'Back':
             components.append(self.pos_back_name)
-        
+
         if number:
             components.append(number)
-        
+
         if type:
             if type == 'JNT':
                 components.append(self.jaw_joint)
@@ -86,14 +87,13 @@ class namingConvention:
 
         return "_".join(components)
 
-
     """
     @classmethod
     def from_base_name(cls, base_name, separator="_"):
-  
+
         # Parse an existing name string into components based on the naming convention and camel case.
         # Example Input: "C_eyeTop02_JNT"
-       
+
         # Step 1: Split the name based on camel case
         words = re.findall(r'[a-zA-Z][^A-Z]*', base_name)  # Extract words based on camel case
 
