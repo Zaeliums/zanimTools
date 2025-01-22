@@ -1,11 +1,11 @@
-import module_reloader
-from rig_setup.core.scene_data import NamingConvention
+#import module_reloader
+from zanimTools.rig_setup.core.scene_data import NamingConvention
 import maya.cmds as cmds
-from rig_setup.ui.main_menu import MainMenu
+from zanimTools.rig_setup.ui.main_menu import MainMenu
 
 
-if __name__ == "__main__":
-    module_reloader.reset_session_for_script()    # (r"C:\Users\ZaDus\Documents\maya\scripts\zanimTools")
+#if __name__ == "__main__":
+    #module_reloader.reset_session_for_script()    # (r"C:\Users\ZaDus\Documents\maya\scripts\zanimTools")
 
 
 # Import the main menu function
