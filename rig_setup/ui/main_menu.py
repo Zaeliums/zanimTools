@@ -9,134 +9,122 @@ class MainMenu:
         self.naming_convention = naming_convention
         self.is_mirror_behavior = None
         self.window = cmds.window("rigSetupUI", title="Rig Setup Tool", widthHeight=(400, 600))
-        cmds.columnLayout(adjustableColumn=True)
+        cmds.columnLayout(adjustableColumn=True, columnAlign="center")
         self.tabs = cmds.tabLayout(innerMarginWidth=5, innerMarginHeight=5)
 
-        # Define a settings node name
-        self.settings_node = "rigSetupSettings"
-
-        # Ensure the settings node exists in the scene
-        if not cmds.objExists(self.settings_node):
-            cmds.createNode("transform", name=self.settings_node)
+        # Dictionary to store UI elements and their corresponding naming convention attributes
+        self.ui_elements = {}
 
         # Name Convention Tab
-        tab_naming = cmds.columnLayout(adjustableColumn=True)
+        tab_naming = cmds.columnLayout(adjustableColumn=True, columnAlign="center")
         cmds.tabLayout(self.tabs, edit=True, tabLabel=[(tab_naming, "Naming Convention")])
-        cmds.frameLayout(label="Naming Convention", font="boldLabelFont", collapsable=True)
 
-        self.side_l_textbox = cmds.textFieldGrp(label="Side Left Prefix:",
-                                                text=self.load_attribute(self.settings_node, "side_l", "L"))
-        self.side_r_textbox = cmds.textFieldGrp(label="Side Right Prefix:",
-                                                text=self.load_attribute(self.settings_node, "side_r", "R"))
-        self.side_c_textbox = cmds.textFieldGrp(label="Side Center Prefix:",
-                                                text=self.load_attribute(self.settings_node, "side_c", "C"))
-        self.pos_top_name_textbox = cmds.textFieldGrp(label="Position Top Name:",
-                                                      text=self.load_attribute(self.settings_node, "pos_top_name",
-                                                                               "Top"))
-        self.pos_bot_name_textbox = cmds.textFieldGrp(label="Position Bot Name:",
-                                                      text=self.load_attribute(self.settings_node, "pos_bot_name",
-                                                                               "Bot"))
-        self.pos_corner_name_textbox = cmds.textFieldGrp(label="Position Corner Name:",
-                                                         text=self.load_attribute(self.settings_node, "pos_corner_name",
-                                                                                  "Corner"))
+        # Naming Convention Collapsable Section
+        cmds.frameLayout(label="Naming Convention Rules", font="boldLabelFont", collapsable=True)
 
-        cmds.setParent("..")
-        cmds.setParent("..")
+        self.ui_elements['side_l'] = cmds.textFieldGrp(label="Side Left Prefix:",
+                                                       text=self.naming_convention.side_l)
+        self.ui_elements['side_r'] = cmds.textFieldGrp(label="Side Right Prefix:",
+                                                       text=self.naming_convention.side_r)
+        self.ui_elements['side_c'] = cmds.textFieldGrp(label="Side Center Prefix:",
+                                                       text=self.naming_convention.side_c)
+        self.ui_elements['side_index'] = cmds.intFieldGrp(label="Index Number For Side Name:",
+                                                          value1=self.naming_convention.side_index)
 
-        # Facial tab
+        self.ui_elements['pos_top_name'] = cmds.textFieldGrp(label="Position Top Name:",
+                                                             text=self.naming_convention.pos_top_name)
+        self.ui_elements['pos_bot_name'] = cmds.textFieldGrp(label="Position Bot Name:",
+                                                             text=self.naming_convention.pos_bot_name)
+        self.ui_elements['pos_corner_name'] = cmds.textFieldGrp(label="Position Corner Name:",
+                                                                text=self.naming_convention.pos_corner_name)
+        self.ui_elements['pos_mid_name'] = cmds.textFieldGrp(label="Position Mid Name:",
+                                                             text=self.naming_convention.pos_mid_name)
+        self.ui_elements['pos_front_name'] = cmds.textFieldGrp(label="Position Front Name:",
+                                                               text=self.naming_convention.pos_front_name)
+        self.ui_elements['pos_back_name'] = cmds.textFieldGrp(label="Position Back Name:",
+                                                              text=self.naming_convention.pos_back_name)
+        self.ui_elements['pos_index'] = cmds.intFieldGrp(label="Index Number For Pos Name:",
+                                                         value1=self.naming_convention.pos_index)
+
+        self.ui_elements['type_joint'] = cmds.textFieldGrp(label="Type Joint:",
+                                                           text=self.naming_convention.type_joint)
+        self.ui_elements['type_control'] = cmds.textFieldGrp(label="Type Control:",
+                                                             text=self.naming_convention.type_control)
+        self.ui_elements['type_Group'] = cmds.textFieldGrp(label="Type Group:",
+                                                           text=self.naming_convention.type_group)
+        self.ui_elements['type_locator'] = cmds.textFieldGrp(label="Type Locator:",
+                                                             text=self.naming_convention.type_locator)
+        self.ui_elements['type_follicle'] = cmds.textFieldGrp(label="Type Follicle:",
+                                                              text=self.naming_convention.type_follicle)
+        self.ui_elements['type_index'] = cmds.intFieldGrp(label="Index Number For Type:",
+                                                          value1=self.naming_convention.type_index)
+
+        cmds.setParent("..")  # End of Naming Convention Collapsable Section
+
+        # Rig Joint Names Collapsable Section
+        cmds.frameLayout(label="Rig Joint Names", font="boldLabelFont", collapsable=True)
+
+        self.ui_elements['jaw01_jnt'] = cmds.textFieldGrp(label="Jaw 01 Joint Name:",
+                                                          text=self.naming_convention.jaw01_jnt)
+        cmds.setParent("..")  # End of Rig Joint Names Collapsable Section
+        cmds.setParent("..")  # End of Name Convention Tab
+
+        # Facial Tab
         tab_facial = cmds.columnLayout(adjustableColumn=True)
         cmds.tabLayout(self.tabs, edit=True, tabLabel=[(tab_facial, "Facial")])
-        # Jaw Fields Section
+
+        # Jaw Fields Collapsable Section
         cmds.frameLayout(label="Jaw Fields", font="boldLabelFont", collapsable=True)
 
-        self.jaw_joint_textbox = cmds.textFieldGrp(label="Jaw Joint:",
-                                                   text=self.load_attribute(self.settings_node, "jaw_joint", ""))
-        self.jaw_control_textbox = cmds.textFieldGrp(label="Jaw Control:",
-                                                     text=self.load_attribute(self.settings_node, "jaw_control", ""))
-        cmds.setParent("..")
+        self.ui_elements['jaw_joint_reference'] = cmds.textFieldGrp(label="Jaw Joint Reference:",
+                                                                    text=self.naming_convention.jaw_joint_reference)
+        self.ui_elements['jaw_control'] = cmds.textFieldGrp(label="Jaw Control:",
+                                                            text=self.naming_convention.jaw_control)
+        cmds.setParent("..")  # End of Jaw Fields collapsable Section
 
-        # Mirror Behavior Checkbox
+        # Mirror Behavior Checkbox Section
         cmds.frameLayout(label="Mirror Behavior Field", font="boldLabelFont")
 
-        self.mirror_behavior_checkbox = cmds.checkBox(label="Mirror Behavior", value=False,
-                                                      changeCommand=self.refresh_mirror_behavior)
-        cmds.setParent("..")
+        self.ui_elements['mirror_behavior'] = cmds.checkBox(label="Mirror Behavior", value=False,
+                                                            changeCommand=self.refresh_mirror_behavior)
+        cmds.setParent("..")  # End of Mirror Behavior Checkbox Section
 
+        # Build Lip Nodes Button Section
         cmds.button(label="Build Lip Nodes", command=self.build_lip_nodes)
-        cmds.setParent("..")
+        cmds.setParent("..")  # End of Build Lip Nodes Button Section
+        cmds.setParent("..")  # End of Facial Tab
 
-        cmds.setParent("..")
-        # Add a button always visible under the tabs to save settings
+        # Save Settings Section (below tabs)
         cmds.button(label="Save Settings", command=self.save_settings)
 
         cmds.showWindow(self.window)
 
-    # Helper to save attributes
-    def save_attribute(self, node, attr_name, value):
-        if not cmds.attributeQuery(attr_name, node=node, exists=True):
-            cmds.addAttr(node, longName=attr_name, dataType="string")
-        cmds.setAttr("{}.{}".format(node, attr_name), value, type="string")
-
-    # Helper to load attributes
-    def load_attribute(self, node, attr_name, default=""):
-        if cmds.attributeQuery(attr_name, node=node, exists=True):
-            return cmds.getAttr("{}.{}".format(node, attr_name))
-        return default
-
     # Define what the button "save settings" does
     def save_settings(self, *args):
-        self.naming_convention.set_attr("jaw_joint",
-                                        cmds.textFieldGrp(self.jaw_joint_textbox, query=True, text=True))
-        self.naming_convention.set_attr("jaw_control",
-                                        cmds.textFieldGrp(self.jaw_control_textbox, query=True, text=True))
-        self.naming_convention.set_attr("side_l",
-                                        cmds.textFieldGrp(self.side_l_textbox, query=True, text=True))
-        self.naming_convention.set_attr("side_r",
-                                        cmds.textFieldGrp(self.side_r_textbox, query=True, text=True))
-        self.naming_convention.set_attr("side_c",
-                                        cmds.textFieldGrp(self.side_c_textbox, query=True, text=True))
-        self.naming_convention.set_attr("pos_top_name",
-                                        cmds.textFieldGrp(self.pos_top_name_textbox, query=True, text=True))
-        self.naming_convention.set_attr("pos_bot_name",
-                                        cmds.textFieldGrp(self.pos_bot_name_textbox, query=True, text=True))
-        self.naming_convention.set_attr("pos_corner_name",
-                                        cmds.textFieldGrp(self.pos_corner_name_textbox, query=True, text=True))
+        """Store the current UI values into the storage node."""
+        settings = {}
+        for attr_name, ui_element in self.ui_elements.items():
+            if cmds.objectTypeUI(ui_element) == 'textFieldGrp':
+                settings[attr_name] = cmds.textFieldGrp(ui_element, query=True, text=True)
+            elif cmds.objectTypeUI(ui_element) == 'checkBox':
+                settings[attr_name] = str(cmds.checkBox(ui_element, query=True, value=True))
+            elif cmds.objectTypeUI(ui_element) == 'intFieldGrp':
+                settings[attr_name] = cmds.intFieldGrp(ui_element, query=True, text=True)
 
-        self.naming_convention.set_attr("mirror_behavior",
-                                        str(cmds.checkBox(self.mirror_behavior_checkbox, query=True, value=True)))
-
-        # Update scene_data dynamically
-        self.naming_convention.update_naming_convention()
-
+        self.naming_convention.update_naming_convention(**settings)
         cmds.warning("Settings saved for this scene!")
 
     # Add a button to run lip setup
     def build_lip_nodes(self, *args):
-        # TODO: Auto save UI values before querying to make sure they are updated in the code even if forgot to save
-        # Ensure the naming convention is up-to-date before using it
-        self.naming_convention.update_naming_convention()
-
-        """jaw_joint = cmds.textFieldGrp(self.jaw_joint_textbox, query=True, text=True)
-        jaw_control = cmds.textFieldGrp(self.jaw_control_textbox, query=True, text=True)
-
-        # Get naming convention fields
-        side_l = cmds.textFieldGrp(self.side_l_textbox, query=True, text=True)
-        side_r = cmds.textFieldGrp(self.side_r_textbox, query=True, text=True)
-        side_c = cmds.textFieldGrp(self.side_c_textbox, query=True, text=True)
-        pos_top_name = cmds.textFieldGrp(self.pos_top_name_textbox, query=True, text=True)
-        pos_bot_name = cmds.textFieldGrp(self.pos_bot_name_textbox, query=True, text=True)
-        pos_corner_name = cmds.textFieldGrp(self.pos_corner_name_textbox, query=True, text=True)"""
-
-        # Dynamically query the mirror behavior checkbox
-        self.is_mirror_behavior = cmds.checkBox(self.mirror_behavior_checkbox, query=True, value=True)
-
-        # Run the lip setup logic
-
+        """Make sure the latest UI values are used before running the lip setup."""
+        # Save settings to update naming convention
+        self.save_settings()
+        # Run lip setup
         create_lip_nodes(
             self.naming_convention,
-            is_mirror_behavior=self.is_mirror_behavior,  # Pass this dynamically
+            is_mirror_behavior=self.naming_convention.mirror_behavior == 'True'
         )
 
     def refresh_mirror_behavior(self, *args):
-        self.is_mirror_behavior = cmds.checkBox(self.mirror_behavior_checkbox, query=True, value=True)
+        self.is_mirror_behavior = cmds.checkBox(self.ui_elements['mirror_behavior'], query=True, value=True)
         print(self.is_mirror_behavior)

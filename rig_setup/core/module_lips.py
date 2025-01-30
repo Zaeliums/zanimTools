@@ -34,7 +34,7 @@ def create_lip_nodes(naming_convention, is_mirror_behavior):
         if naming_convention.pos_bot_name in control:
             cmds.shadingNode("remapValue", asUtility=True, name=control + "_inv")
 
-        cmds.connectAttr(naming_convention.jaw_joint + ".rotate", control + "_multi.input1", force=True)  # Connect Jaw rotate with the multiply node (to allow lip rotation to match jaw rotation)
+        cmds.connectAttr(naming_convention.jaw_joint_reference + ".rotate", control + "_multi.input1", force=True)  # Connect Jaw rotate with the multiply node (to allow lip rotation to match jaw rotation)
         cmds.connectAttr(naming_convention.jaw_control + ".StickyLips", control + "_remap_pressed.inputValue", force=True)  # Connect Jaw controller attribute "Sticky Lips" to the input value of the _remap_pressed node
 
         if naming_convention.pos_bot_name in control:
