@@ -85,29 +85,38 @@ class MainMenu:
 
     # Define what the button "save settings" does
     def save_settings(self, *args):
-        self.save_attribute(self.settings_node, "jaw_joint",
-                            cmds.textFieldGrp(self.jaw_joint_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "jaw_control",
-                            cmds.textFieldGrp(self.jaw_control_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "side_l",
-                            cmds.textFieldGrp(self.side_l_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "side_r",
-                            cmds.textFieldGrp(self.side_r_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "side_c",
-                            cmds.textFieldGrp(self.side_c_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "pos_top_name",
-                            cmds.textFieldGrp(self.pos_top_name_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "pos_bot_name",
-                            cmds.textFieldGrp(self.pos_bot_name_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "pos_corner_name",
-                            cmds.textFieldGrp(self.pos_corner_name_textbox, query=True, text=True))
-        self.save_attribute(self.settings_node, "mirror_behavior",
-                            str(cmds.checkBox(self.mirror_behavior_checkbox, query=True, value=True)))
+        self.naming_convention.set_attr("jaw_joint",
+                                        cmds.textFieldGrp(self.jaw_joint_textbox, query=True, text=True))
+        self.naming_convention.set_attr("jaw_control",
+                                        cmds.textFieldGrp(self.jaw_control_textbox, query=True, text=True))
+        self.naming_convention.set_attr("side_l",
+                                        cmds.textFieldGrp(self.side_l_textbox, query=True, text=True))
+        self.naming_convention.set_attr("side_r",
+                                        cmds.textFieldGrp(self.side_r_textbox, query=True, text=True))
+        self.naming_convention.set_attr("side_c",
+                                        cmds.textFieldGrp(self.side_c_textbox, query=True, text=True))
+        self.naming_convention.set_attr("pos_top_name",
+                                        cmds.textFieldGrp(self.pos_top_name_textbox, query=True, text=True))
+        self.naming_convention.set_attr("pos_bot_name",
+                                        cmds.textFieldGrp(self.pos_bot_name_textbox, query=True, text=True))
+        self.naming_convention.set_attr("pos_corner_name",
+                                        cmds.textFieldGrp(self.pos_corner_name_textbox, query=True, text=True))
+
+        self.naming_convention.set_attr("mirror_behavior",
+                                        str(cmds.checkBox(self.mirror_behavior_checkbox, query=True, value=True)))
+
+        # Update scene_data dynamically
+        self.naming_convention.update_naming_convention()
+
         cmds.warning("Settings saved for this scene!")
 
     # Add a button to run lip setup
     def build_lip_nodes(self, *args):
-        jaw_joint = cmds.textFieldGrp(self.jaw_joint_textbox, query=True, text=True)
+        # TODO: Auto save UI values before querying to make sure they are updated in the code even if forgot to save
+        # Ensure the naming convention is up-to-date before using it
+        self.naming_convention.update_naming_convention()
+
+        """jaw_joint = cmds.textFieldGrp(self.jaw_joint_textbox, query=True, text=True)
         jaw_control = cmds.textFieldGrp(self.jaw_control_textbox, query=True, text=True)
 
         # Get naming convention fields
@@ -116,12 +125,13 @@ class MainMenu:
         side_c = cmds.textFieldGrp(self.side_c_textbox, query=True, text=True)
         pos_top_name = cmds.textFieldGrp(self.pos_top_name_textbox, query=True, text=True)
         pos_bot_name = cmds.textFieldGrp(self.pos_bot_name_textbox, query=True, text=True)
-        pos_corner_name = cmds.textFieldGrp(self.pos_corner_name_textbox, query=True, text=True)
+        pos_corner_name = cmds.textFieldGrp(self.pos_corner_name_textbox, query=True, text=True)"""
 
         # Dynamically query the mirror behavior checkbox
         self.is_mirror_behavior = cmds.checkBox(self.mirror_behavior_checkbox, query=True, value=True)
 
         # Run the lip setup logic
+
         create_lip_nodes(
             self.naming_convention,
             is_mirror_behavior=self.is_mirror_behavior,  # Pass this dynamically

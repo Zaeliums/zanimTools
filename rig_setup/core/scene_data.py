@@ -1,26 +1,46 @@
 import re
+import maya.cmds as cmds
 
 
 class NamingConvention:
     # TODO: Make this updated by inputs in Maya; ask Alex, he seemed to know what he was talking about
-    def __init__(self, side_l="L", side_r="R", side_c="C",
-                 pos_top_name="Top", pos_bot_name="Bot", pos_corner_name="Corner",
-                 pos_mid_name="Mid", pos_front_name="Front", pos_back_name="Back",
-                 jaw_joint="JNT", jaw_control="CTL"):
-        # Initialize the naming conventions with defaults or provided values
-        self.side_l = side_l
-        self.side_r = side_r
-        self.side_c = side_c
+    def __init__(self, settings_node="rigSetupSettings"):
+        self.settings_node = settings_node
 
-        self.pos_top_name = pos_top_name
-        self.pos_bot_name = pos_bot_name
-        self.pos_corner_name = pos_corner_name
-        self.pos_mid_name = pos_mid_name
-        self.pos_front_name = pos_front_name
-        self.pos_back_name = pos_back_name
+        # Load settings dynamically
+        self.load_naming_convention()
 
-        self.jaw_joint = jaw_joint
-        self.jaw_control = jaw_control
+    def load_naming_convention(self):
+        """Load naming convention from Maya scene settings node."""
+        self.side_l = self.get_attr("side_l", "L")
+        self.side_r = self.get_attr("side_r", "R")
+        self.side_c = self.get_attr("side_c", "C")
+
+        self.pos_top_name = self.get_attr("pos_top_name", "Top")
+        self.pos_bot_name = self.get_attr("pos_bot_name", "Bot")
+        self.pos_corner_name = self.get_attr("pos_corner_name", "Corner")
+        self.pos_mid_name = self.get_attr("pos_mid_name", "Mid")
+        self.pos_front_name = self.get_attr("pos_front_name", "Front")
+        self.pos_back_name = self.get_attr("pos_back_name", "Back")
+
+        self.jaw_joint = self.get_attr("jaw_joint", "JNT")
+        self.jaw_control = self.get_attr("jaw_control", "CTL")
+
+    def get_attr(self, attr_name, default):
+        """Helper to get attribute from settings node."""
+        if cmds.attributeQuery(attr_name, node=self.settings_node, exists=True):
+            return cmds.getAttr(f"{self.settings_node}.{attr_name}")
+        return default
+
+    def set_attr(self, attr_name, value):
+        """Helper to set attribute on settings node."""
+        if not cmds.attributeQuery(attr_name, node=self.settings_node, exists=True):
+            cmds.addAttr(self.settings_node, longName=attr_name, dataType="string")
+        cmds.setAttr(f"{self.settings_node}.{attr_name}", value, type="string")
+
+    def update_naming_convention(self):
+        """Update naming convention dynamically from settings."""
+        self.load_naming_convention()
 
     @classmethod
     def get_mirrored_name(cls, controller_name):
@@ -31,22 +51,6 @@ class NamingConvention:
             return controller_name.replace(cls.side_r, cls.side_l)
         else:
             return controller_name  # Return as-is if no match
-
-    def update_naming_convention(self, side_l, side_r, side_c, pos_top, pos_bot,
-                                 pos_corner, pos_mid, pos_front, pos_back,
-                                 jaw_joint, jaw_control):
-        # Update the naming convention values based on UI input
-        self.side_l = side_l
-        self.side_r = side_r
-        self.side_c = side_c
-        self.pos_top_name = pos_top
-        self.pos_bot_name = pos_bot
-        self.pos_corner_name = pos_corner
-        self.pos_mid_name = pos_mid
-        self.pos_front_name = pos_front
-        self.pos_back_name = pos_back
-        self.jaw_joint = jaw_joint
-        self.jaw_control = jaw_control
 
     def resolve(self, base_name, pos_name, side_name, number=None, type=None):
         """
