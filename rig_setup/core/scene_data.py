@@ -64,7 +64,6 @@ class NamingConvention:
 
         self.mirror_behavior = self.get_attr("mirror_behavior", "False")
 
-
     def get_attr(self, attr_name, default):
         """Retrieve an attribute value from Maya or return a default."""
         if cmds.attributeQuery(attr_name, node=self.settings_node, exists=True):

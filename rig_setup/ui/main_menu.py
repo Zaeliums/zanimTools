@@ -102,16 +102,28 @@ class MainMenu:
     # Define what the button "save settings" does
     def save_settings(self, *args):
         """Store the current UI values into the storage node."""
-        settings = {}
-        for attr_name, ui_element in self.ui_elements.items():
-            if cmds.objectTypeUI(ui_element) == 'textFieldGrp':
-                settings[attr_name] = cmds.textFieldGrp(ui_element, query=True, text=True)
-            elif cmds.objectTypeUI(ui_element) == 'checkBox':
-                settings[attr_name] = str(cmds.checkBox(ui_element, query=True, value=True))
-            elif cmds.objectTypeUI(ui_element) == 'intFieldGrp':
-                settings[attr_name] = cmds.intFieldGrp(ui_element, query=True, text=True)
+        self.naming_convention.set_attr("jaw_joint",
+                                        cmds.textFieldGrp(self.ui_elements["jaw_joint"], query=True, text=True))
+        self.naming_convention.set_attr("jaw_control",
+                                        cmds.textFieldGrp(self.ui_elements["jaw_control"], query=True, text=True))
+        self.naming_convention.set_attr("side_l",
+                                        cmds.textFieldGrp(self.ui_elements["side_l"], query=True, text=True))
+        self.naming_convention.set_attr("side_r",
+                                        cmds.textFieldGrp(self.ui_elements["side_r"], query=True, text=True))
+        self.naming_convention.set_attr("side_c",
+                                        cmds.textFieldGrp(self.ui_elements["side_c"], query=True, text=True))
+        self.naming_convention.set_attr("pos_top_name",
+                                        cmds.textFieldGrp(self.ui_elements["pos_top_name"], query=True, text=True))
+        self.naming_convention.set_attr("pos_bot_name",
+                                        cmds.textFieldGrp(self.ui_elements["pos_bot_name"], query=True, text=True))
+        self.naming_convention.set_attr("pos_corner_name",
+                                        cmds.textFieldGrp(self.ui_elements["pos_corner_name"], query=True, text=True))
 
-        self.naming_convention.update_naming_convention(**settings)
+        self.naming_convention.set_attr("mirror_behavior",
+                                        str(cmds.checkBox(self.ui_elements["mirror_behavior"], query=True, value=True)))
+
+        # Update scene_data dynamically
+        self.naming_convention.update_naming_convention()
         cmds.warning("Settings saved for this scene!")
 
     # Add a button to run lip setup
