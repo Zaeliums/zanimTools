@@ -42,71 +42,19 @@ class NamingConvention:
     def get_attributes(self):
         return {attr: getattr(self, attr) for attr in dir(self) if
                 not attr.startswith('__') and not callable(getattr(self, attr))}
-
-
-class MayaDataInputUI:
-    def __init__(self, naming_convention):
-        self.window = "dataInputWindow"
-        self.title = "Data Input UI"
-        self.size = (300, 800)
-        self.naming_convention = naming_convention
-        self.attribute_values = {}
-
-        # Create UI
-        self.create_ui()
-
-    def create_ui(self):
-        if cmds.window(self.window, exists=True):
-            cmds.deleteUI(self.window, window=True)
-
-        self.window = cmds.window(self.window, title=self.title, widthHeight=self.size)
-        self.layout = cmds.columnLayout(adjustableColumn=True)
-
-        attributes = self.naming_convention.get_attributes()
-        for attr_name, attr_value in attributes.items():
-            if isinstance(attr_value, bool):
-                self.create_checkbox(attr_name, attr_value)
-            elif isinstance(attr_value, str):
-                self.create_textbox(attr_name, attr_value)
-            elif isinstance(attr_value, int):
-                self.create_numerical_box(attr_name, attr_value, int)
-            elif isinstance(attr_value, float):
-                self.create_numerical_box(attr_name, attr_value, float)
-
-        # Save button
-        self.save_button = cmds.button(label="Save Data", command=self.save_data)
-
-        cmds.showWindow(self.window)
-
-    def create_checkbox(self, name, value):
-        checkbox = cmds.checkBox(label=name, value=value)
-        self.attribute_values[name] = checkbox
-
-    def create_textbox(self, name, value):
-        cmds.text(label=f"{name}:")
-        textbox = cmds.textField(text=value)
-        self.attribute_values[name] = textbox
-
-    def create_numerical_box(self, name, value, value_type):
-        cmds.text(label=f"{name}:")
-        if value_type == int:
-            numerical_box = cmds.intField(value=value)
-        else:
-            numerical_box = cmds.floatField(value=value)
-        self.attribute_values[name] = numerical_box
-
-    def save_data(self, *args):
-        attributes = self.naming_convention.get_attributes()
+    
+    def save_data(self, attribute_values):
+        attributes = self.get_attributes()
         
         for attr_name, attr_value in attributes.items():
             if isinstance(attr_value, bool):
-                value = cmds.checkBox(self.attribute_values[attr_name], query=True, value=True)
+                value = cmds.checkBox(attribute_values[attr_name], query=True, value=True)
             elif isinstance(attr_value, str):
-                value = cmds.textField(self.attribute_values[attr_name], query=True, text=True)
+                value = cmds.textField(attribute_values[attr_name], query=True, text=True)
             elif isinstance(attr_value, int):
-                value = cmds.intField(self.attribute_values[attr_name], query=True, value=True)
+                value = cmds.intField(attribute_values[attr_name], query=True, value=True)
             elif isinstance(attr_value, float):
-                value = cmds.floatField(self.attribute_values[attr_name], query=True, value=True)
+                value = cmds.floatField(attribute_values[attr_name], query=True, value=True)
             
             # Create or update a scene node to store the data
             if not cmds.objExists(self.settings_node):
@@ -134,6 +82,62 @@ class MayaDataInputUI:
                 cmds.setAttr(f"{self.settings_node}.{attr_name}", value)
         
         cmds.confirmDialog(title="Data Saved", message="Data has been saved to the scene node.", button=["OK"])
+
+
+class MayaDataInputUI:
+    def __init__(self, naming_convention):
+        self.window = "dataInputWindow"
+        self.title = "Data Input UI"
+        self.size = (300, 800)
+        self.naming_convention = naming_convention
+        self.attribute_values = {}
+
+        self.create_ui()
+
+    def create_ui(self):
+        if cmds.window(self.window, exists=True):
+            cmds.deleteUI(self.window, window=True)
+
+        self.window = cmds.window(self.window, title=self.title, widthHeight=self.size)
+        self.layout = cmds.columnLayout(adjustableColumn=True)
+
+        attributes = self.naming_convention.get_attributes()
+        for attr_name, attr_value in attributes.items():
+            if isinstance(attr_value, bool):
+                self.create_checkbox(attr_name, attr_value)
+            elif isinstance(attr_value, str):
+                self.create_textbox(attr_name, attr_value)
+            elif isinstance(attr_value, int):
+                self.create_numerical_box(attr_name, attr_value, int)
+            elif isinstance(attr_value, float):
+                self.create_numerical_box(attr_name, attr_value, float)
+
+        # Save button
+        self.save_button = cmds.button(label="Save Data", command=naming_convention.save_data)
+
+        cmds.showWindow(self.window)
+
+    def create_checkbox(self, name, value):
+        checkbox = cmds.checkBox(label=name, value=value)
+        self.attribute_values[name] = checkbox
+
+    def create_textbox(self, name, value):
+        cmds.text(label=f"{name}:")
+        textbox = cmds.textField(text=value)
+        self.attribute_values[name] = textbox
+
+    def create_numerical_box(self, name, value, value_type):
+        cmds.text(label=f"{name}:")
+        if value_type == int:
+            numerical_box = cmds.intField(value=value)
+        else:
+            numerical_box = cmds.floatField(value=value)
+        self.attribute_values[name] = numerical_box
+
+    def save_data(self, *args):
+        self.naming_convention.save_data(self.attribute_values)
+
+
 
 
 # Example usage
