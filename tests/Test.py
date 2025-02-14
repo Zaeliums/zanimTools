@@ -44,20 +44,20 @@ class NamingConvention:
     def save_data(self, attr_values):
         scene_data = self.fetch_scene_data()
 
-        for attribute, attr_value in scene_data.items():
+        for object, attr_value in scene_data.items():
             if isinstance(attr_value, bool):
-                value = cmds.checkBox(attr_values[attribute], query=True, value=True)
+                value = cmds.checkBox(attr_values[object], query=True, value=True)
             elif isinstance(attr_value, str):
-                value = cmds.textField(attr_values[attribute], query=True, text=True)
+                value = cmds.textField(attr_values[object], query=True, text=True)
             elif isinstance(attr_value, int):
-                value = cmds.intField(attr_values[attribute], query=True, value=True)
+                value = cmds.intField(attr_values[object], query=True, value=True)
             elif isinstance(attr_value, float):
-                value = cmds.floatField(attr_values[attribute], query=True, value=True)
+                value = cmds.floatField(attr_values[object], query=True, value=True)
 
             if not cmds.objExists(self.settings_node):
                 cmds.createNode("transform", name=self.settings_node)
 
-            attr_type = type(scene_data[attribute])
+            attr_type = type(scene_data[object])
             if attr_type == bool:
                 atype = "bool"
             elif attr_type == str:
@@ -67,16 +67,16 @@ class NamingConvention:
             elif attr_type == float:
                 atype = "float"
 
-            if not cmds.attributeQuery(attribute, node=self.settings_node, exists=True):
+            if not cmds.attributeQuery(object, node=self.settings_node, exists=True):
                 if atype == "string":
-                    cmds.addAttr(self.settings_node, longName=attribute, dataType=atype)
+                    cmds.addAttr(self.settings_node, longName=object, dataType=atype)
                 else:
-                    cmds.addAttr(self.settings_node, longName=attribute, attributeType=atype)
+                    cmds.addAttr(self.settings_node, longName=object, attributeType=atype)
 
             if atype == "string":
-                cmds.setAttr(f"{self.settings_node}.{attribute}", value, type=atype)
+                cmds.setAttr(f"{self.settings_node}.{object}", value, type=atype)
             else:
-                cmds.setAttr(f"{self.settings_node}.{attribute}", value)
+                cmds.setAttr(f"{self.settings_node}.{object}", value)
 
         cmds.confirmDialog(title="Data Saved", message="Data has been saved to the scene node.", button=["OK"])
 
@@ -98,15 +98,15 @@ class MainMenu:
         self.layout = cmds.columnLayout(adjustableColumn=True)
 
         scene_data = self.naming_convention.fetch_scene_data()
-        for attribute, attr_value in scene_data.items():
+        for object, attr_value in scene_data.items():
             if isinstance(attr_value, bool):
-                self.create_checkbox(attribute, attr_value)
+                self.create_checkbox(object, attr_value)
             elif isinstance(attr_value, str):
-                self.create_textbox(attribute, attr_value)
+                self.create_textbox(object, attr_value)
             elif isinstance(attr_value, int):
-                self.create_numerical_box(attribute, attr_value, int)
+                self.create_numerical_box(object, attr_value, int)
             elif isinstance(attr_value, float):
-                self.create_numerical_box(attribute, attr_value, float)
+                self.create_numerical_box(object, attr_value, float)
 
         self.save_button = cmds.button(label="Save Data", command=self.save_data)
 
