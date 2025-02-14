@@ -1,6 +1,4 @@
-from importlib import reload
 import maya.cmds as cmds
-
 
 class NamingConvention:
     def __init__(self, settings_node="rigSetupSettings"):
@@ -42,10 +40,10 @@ class NamingConvention:
     def get_attributes(self):
         return {attr: getattr(self, attr) for attr in dir(self) if
                 not attr.startswith('__') and not callable(getattr(self, attr))}
-    
+
     def save_data(self, attribute_values):
         attributes = self.get_attributes()
-        
+
         for attr_name, attr_value in attributes.items():
             if isinstance(attr_value, bool):
                 value = cmds.checkBox(attribute_values[attr_name], query=True, value=True)
@@ -55,8 +53,7 @@ class NamingConvention:
                 value = cmds.intField(attribute_values[attr_name], query=True, value=True)
             elif isinstance(attr_value, float):
                 value = cmds.floatField(attribute_values[attr_name], query=True, value=True)
-            
-            # Create or update a scene node to store the data
+
             if not cmds.objExists(self.settings_node):
                 cmds.createNode("transform", name=self.settings_node)
 
@@ -69,20 +66,19 @@ class NamingConvention:
                 atype = "long"
             elif attr_type == float:
                 atype = "float"
-            
+
             if not cmds.attributeQuery(attr_name, node=self.settings_node, exists=True):
                 if atype == "string":
                     cmds.addAttr(self.settings_node, longName=attr_name, dataType=atype)
                 else:
                     cmds.addAttr(self.settings_node, longName=attr_name, attributeType=atype)
-                    
+
             if atype == "string":
                 cmds.setAttr(f"{self.settings_node}.{attr_name}", value, type=atype)
             else:
                 cmds.setAttr(f"{self.settings_node}.{attr_name}", value)
-        
-        cmds.confirmDialog(title="Data Saved", message="Data has been saved to the scene node.", button=["OK"])
 
+        cmds.confirmDialog(title="Data Saved", message="Data has been saved to the scene node.", button=["OK"])
 
 class MayaDataInputUI:
     def __init__(self, naming_convention):
@@ -112,8 +108,7 @@ class MayaDataInputUI:
             elif isinstance(attr_value, float):
                 self.create_numerical_box(attr_name, attr_value, float)
 
-        # Save button
-        self.save_button = cmds.button(label="Save Data", command=naming_convention.save_data)
+        self.save_button = cmds.button(label="Save Data", command=self.save_data)
 
         cmds.showWindow(self.window)
 
@@ -136,9 +131,6 @@ class MayaDataInputUI:
 
     def save_data(self, *args):
         self.naming_convention.save_data(self.attribute_values)
-
-
-
 
 # Example usage
 naming_convention = NamingConvention()
