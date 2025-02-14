@@ -1,36 +1,37 @@
 import maya.cmds as cmds
 
 class NamingConvention:
-    def __init__(self, settings_node="rigSetupSettings"):
-        self.settings_node = settings_node
-        self.separator = self.get_attr("separator", "_")  # Should probably never be changed
+    settings_node = "rigSetupSettings"
+    
+    # Default values
+    _defaults = {
+        "separator": "_",
+        "side_l": "L",
+        "side_r": "R",
+        "side_c": "C",
+        "side_index": 0,
+        "pos_top_name": "Top",
+        "pos_bot_name": "Bot",
+        "pos_corner_name": "Corner",
+        "pos_mid_name": "Mid",
+        "pos_front_name": "Front",
+        "pos_back_name": "Back",
+        "pos_index": 1,
+        "type_joint": "JNT",
+        "type_control": "CTL",
+        "type_group": "GRP",
+        "type_locator": "LOC",
+        "type_follicle": "FOL",
+        "type_index": 2,
+        "jaw_joint_reference": "C_jawA01_JNT",
+        "jaw_control": "C_jawOpen_CTL",
+        "jaw01_jnt": "C_jawA01_JNT",
+        "mirror_behavior": False
+    }
 
-        self.side_l = self.get_attr("side_l", "L")
-        self.side_r = self.get_attr("side_r", "R")
-        self.side_c = self.get_attr("side_c", "C")
-        self.side_index = self.get_attr("side_index", 0)  # What token contains side indicator
-
-        self.pos_top_name = self.get_attr("pos_top_name", "Top")
-        self.pos_bot_name = self.get_attr("pos_bot_name", "Bot")
-        self.pos_corner_name = self.get_attr("pos_corner_name", "Corner")
-        self.pos_mid_name = self.get_attr("pos_mid_name", "Mid")
-        self.pos_front_name = self.get_attr("pos_front_name", "Front")
-        self.pos_back_name = self.get_attr("pos_back_name", "Back")
-        self.pos_index = self.get_attr("pos_index", 1)  # What token contains position indicator
-
-        self.type_joint = self.get_attr("type_joint", "JNT")
-        self.type_control = self.get_attr("type_control", "CTL")
-        self.type_group = self.get_attr("type_group", "GRP")
-        self.type_locator = self.get_attr("type_locator", "LOC")
-        self.type_follicle = self.get_attr("type_follicle", "FOL")
-        self.type_index = self.get_attr("type_index", 2)  # What token contains type indicator
-
-        self.jaw_joint_reference = self.get_attr("jaw_joint_reference", "C_jawA01_JNT")  # Specific full names
-        self.jaw_control = self.get_attr("jaw_control", "C_jawOpen_CTL")  # Specific full names
-
-        self.jaw01_jnt = self.get_attr("jaw01_jnt", "C_jawA01_JNT")
-
-        self.mirror_behavior = self.get_attr("mirror_behavior", False)
+    def __init__(self):
+        for attr_name, default_value in self._defaults.items():
+            setattr(self, attr_name, self.get_attr(attr_name, default_value))
 
     def get_attr(self, attr_name, default):
         if cmds.objExists(self.settings_node) and cmds.attributeQuery(attr_name, node=self.settings_node, exists=True):
@@ -38,8 +39,7 @@ class NamingConvention:
         return default
 
     def fetch_scene_data(self):
-        return {attr: getattr(self, attr) for attr in dir(self) if
-                not attr.startswith('__') and not callable(getattr(self, attr))}
+        return {attr: getattr(self, attr) for attr in self._defaults}
 
     def save_data(self, attr_values):
         scene_data = self.fetch_scene_data()
