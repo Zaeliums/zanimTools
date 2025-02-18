@@ -109,6 +109,8 @@ class MainMenu:
                 self.create_numerical_box(object, attr_value, float)
 
         self.save_button = cmds.button(label="Save Data", command=self.save_data)
+        self.build_rig = cmds.button(label="Build Rig", command=lambda *_: create_rig(self.naming_convention))
+
 
         cmds.showWindow(self.window)
 
@@ -131,6 +133,10 @@ class MainMenu:
 
     def save_data(self, *args):
         self.naming_convention.save_data(self.attr_values)
+        self.naming_convention = NamingConvention()  # Reload updated values
+
+def create_rig(naming_convention):
+    print(naming_convention.fetch_scene_data())
 
 # Example usage
 naming_convention = NamingConvention()
