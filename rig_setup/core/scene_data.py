@@ -1,18 +1,9 @@
-import re
-
 import maya.cmds as cmds
 
-
 class NamingConvention:
-    # TODO: Make this updated by inputs in Maya; ask Alex, he seemed to know what he was talking about
-    def __init__(self, settings_node="rigSetupSettings"):
-        self.settings_node = settings_node
+    settings_node = "rigSetupSettings"
 
-        # Ensure settings node exists
-        if not cmds.objExists(self.settings_node):
-            cmds.createNode("transform", name=self.settings_node)
-
-        """
+    """
         nomenclature works like this:
         name is made from 3 tokens
         side token
@@ -34,53 +25,81 @@ class NamingConvention:
         If values need to be exposed in the UI to be changed by the user, add them both here and in main_menu.py in the 
         class __init__ UI layout.
         """
-        # Load initial values from Maya attributes (or use defaults)
-        self.separator = self.get_attr("separator", "_")  # Should probably never be changed
+    
+    _defaults = {
+        "separator": "_",  # Should probably never be changed
+        "side_l": "L",
+        "side_r": "R",
+        "side_c": "C",
+        "side_index": 0,  # What token contains side indicator
+        "pos_top_name": "Top",
+        "pos_bot_name": "Bot",
+        "pos_corner_name": "Corner",
+        "pos_mid_name": "Mid",
+        "pos_front_name": "Front",
+        "pos_back_name": "Back",
+        "pos_index": 1,  # What token contains position indicator
+        "type_joint": "JNT",
+        "type_control": "CTL",
+        "type_group": "GRP",
+        "type_locator": "LOC",
+        "type_follicle": "FOL",
+        "type_index": 2,  # What token contains type indicator
+        "jaw_joint_reference": "C_jawA01_JNT",
+        "jaw_control": "C_jawOpen_CTL",
+        "jaw01_jnt": "C_jawA01_JNT",
+        "mirror_behavior": False
+    }
+    def __init__(self):
+        for attr_name, default_value in self._defaults.items():
+            setattr(self, attr_name, self.get_attr(attr_name, default_value))
 
-        self.side_l = self.get_attr("side_l", "L")
-        self.side_r = self.get_attr("side_r", "R")
-        self.side_c = self.get_attr("side_c", "C")
-        self.side_index = self.get_attr("side_index", 0)  # What token contains side indicator
-
-        self.pos_top_name = self.get_attr("pos_top_name", "Top")
-        self.pos_bot_name = self.get_attr("pos_bot_name", "Bot")
-        self.pos_corner_name = self.get_attr("pos_corner_name", "Corner")
-        self.pos_mid_name = self.get_attr("pos_mid_name", "Mid")
-        self.pos_front_name = self.get_attr("pos_front_name", "Front")
-        self.pos_back_name = self.get_attr("pos_back_name", "Back")
-        self.pos_index = self.get_attr("pos_index", 1)  # What token contains position indicator
-
-        self.type_joint = self.get_attr("type_joint", "JNT")
-        self.type_control = self.get_attr("type_joint", "CTL")
-        self.type_group = self.get_attr("type_group", "GRP")
-        self.type_locator = self.get_attr("type_locator", "LOC")
-        self.type_follicle = self.get_attr("type_follicle", "FOL")
-        self.type_index = self.get_attr("type_index", 2)  # What token contains type indicator
-
-        self.jaw_joint_reference = self.get_attr("jaw_joint_reference", "C_jawA01_JNT")  # Specific full names
-        self.jaw_control = self.get_attr("jaw_control", "C_jawOpen_CTL")  # Specific full names
-
-        self.jaw01_jnt = self.get_attr("jaw01_jnt", "C_jawA01_JNT")
-
-        self.mirror_behavior = self.get_attr("mirror_behavior", "False")
 
     def get_attr(self, attr_name, default):
-        """Retrieve an attribute value from Maya or return a default."""
-        if cmds.attributeQuery(attr_name, node=self.settings_node, exists=True):
+        if cmds.objExists(self.settings_node) and cmds.attributeQuery(attr_name, node=self.settings_node, exists=True):
             return cmds.getAttr(f"{self.settings_node}.{attr_name}")
         return default
 
-    def set_attr(self, attr_name, value):
-        """Store an attribute value in Maya."""
-        if not cmds.attributeQuery(attr_name, node=self.settings_node, exists=True):
-            cmds.addAttr(self.settings_node, longName=attr_name, dataType="string")
-        cmds.setAttr(f"{self.settings_node}.{attr_name}", value, type="string")
+    def fetch_scene_data(self):
+        return {attr: getattr(self, attr) for attr in self._defaults}
 
-    def update_naming_convention(self, **kwargs):
-        """Update values dynamically and save them to the settings node."""
-        for key, value in kwargs.items():
-            setattr(self, key, value)  # Update the attribute in Python
-            self.set_attr(key, value)  # Store the value in Maya
+    def save_data(self, ui_elements):
+        scene_data = self.fetch_scene_data()
+
+        for ui_element, ui_value in scene_data.items():
+            if isinstance(ui_value, bool):
+                value = cmds.checkBox(ui_elements[ui_element], query=True, value=True)
+            elif isinstance(ui_value, str):
+                value = cmds.textField(ui_elements[ui_element], query=True, text=True)
+            elif isinstance(ui_value, int):
+                value = cmds.intField(ui_elements[ui_element], query=True, value=True)
+            elif isinstance(ui_value, float):
+                value = cmds.floatField(ui_elements[ui_element], query=True, value=True)
+
+            if not cmds.objExists(self.settings_node):
+                cmds.createNode("transform", name=self.settings_node)
+
+            attr_type = type(scene_data[ui_element])
+            if attr_type == bool:
+                atype = "bool"
+            elif attr_type == str:
+                atype = "string"
+            elif attr_type == int:
+                atype = "long"
+            elif attr_type == float:
+                atype = "float"
+
+            if not cmds.attributeQuery(ui_element, node=self.settings_node, exists=True):
+                if atype == "string":
+                    cmds.addAttr(self.settings_node, longName=ui_element, dataType=atype)
+                else:
+                    cmds.addAttr(self.settings_node, longName=ui_element, attributeType=atype)
+
+            if atype == "string":
+                cmds.setAttr(f"{self.settings_node}.{ui_element}", value, type=atype)
+            else:
+                cmds.setAttr(f"{self.settings_node}.{ui_element}", value)
+
 
     @classmethod
     def get_mirrored_name(cls, controller_name):
